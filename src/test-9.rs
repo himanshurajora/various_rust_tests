@@ -3,7 +3,7 @@ use std::{error::Error, io};
 use crossterm::{
     event::{self, DisableMouseCapture, Event, KeyCode},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, LeaveAlternateScreen},
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, LeaveAlternateScreen},
 };
 use tui::{
     backend::{Backend, CrosstermBackend},
@@ -18,7 +18,13 @@ use tui::{
 fn main() -> Result<(), Box<dyn Error>> {
     enable_raw_mode().expect("Could not enable raw mode");
     let mut stdout = io::stdout();
-    execute!(stdout, LeaveAlternateScreen, DisableMouseCapture).unwrap();
+    execute!(
+        stdout,
+        LeaveAlternateScreen,
+        DisableMouseCapture,
+        Clear(crossterm::terminal::ClearType::All)
+    )
+    .unwrap();
 
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend).unwrap();
@@ -27,7 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     execute!(
         terminal.backend_mut(),
         LeaveAlternateScreen,
-        DisableMouseCapture
+        DisableMouseCapture,
     )
     .unwrap();
 
@@ -71,8 +77,8 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
                 resolution: tui::widgets::canvas::MapResolution::High,
             });
         })
-        .x_bounds([-180.0, 180.0])
-        .y_bounds([-90.0, 90.0]);
+        .x_bounds([-360f64, 360f64])
+        .y_bounds([-180f64, 180f64]);
 
     f.render_widget(canvas, size);
     // f.render_widget(block, size);
