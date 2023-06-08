@@ -60,8 +60,8 @@ macro_rules! generate_get_fun {
 // I just want to generate simple thing
 macro_rules! single {
     ($strct_name:ident { $field_name:ident : $field_type: ty }) => {
+        // here we go with paste
         paste::item! {
-
             pub fn [< get_ $field_name >] (&self) -> $field_type {
                 self.$field_name.clone()
         }
